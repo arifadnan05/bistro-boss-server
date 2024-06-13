@@ -40,8 +40,18 @@ async function run() {
 
         // user related api
 
+        app.get('/users', async (req, res) => {
+            const result = await usersCollection.find().toArray()
+            res.send(result)
+        })
+
         app.post('/users', async (req,res) => {
             const user = req.body;
+            const query = {email: user.email}
+            const exitingUser = await usersCollection.findOne(query)
+            if(exitingUser) {
+                return res.send({message: 'user already exits', insertedId: null})
+            }
             const result = await usersCollection.insertOne(user)
             res.send(result)
         })
